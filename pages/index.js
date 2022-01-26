@@ -2,7 +2,6 @@ import { Box, Button, Text, TextField, Image } from "@skynexui/components";
 import React from "react";
 import { useRouter } from "next/router";
 import appConfig from "../config.json";
-import DefineBackgroudImage from "../services/backgroudImages.js";
 
 function Titulo(props) {
   const Tag = props.tag || "h1";
