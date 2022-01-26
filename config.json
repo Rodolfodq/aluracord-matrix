@@ -1,5 +1,5 @@
 {
-    "name": "Aluracord - Matrix (peas)",
+    "name": "Aluracord - Matrix",
     "theme": {
       "colors": {
         "primary": {
@@ -30,6 +30,17 @@
         }
       }
     },
+    "backgroudImages": [
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/07/this-is-fine.jpeg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/10/international-space-station-cupola-1536x864.jpg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/08/blue-screen-of-death-in-windows-xp-1536x864.jpg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/07/theres-no-place-like-127.0.0.1-plaque-1536x864.jpg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/07/staredad-1536x864.jpg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/12/pulp-fiction-vincent-and-jules-coffee-1536x864.jpg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/07/star-wars-the-lars-homestead-at-tatooine-1536x864.jpg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/07/star-wars-imperial-star-destroyer-bridge-1536x864.jpg",
+      "https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg"
+    ],
     "stickers": [
       "https://www.alura.com.br/imersao-react-4/assets/figurinhas/Figurinha_1.png",
       "https://www.alura.com.br/imersao-react-4/assets/figurinhas/Figurinha_2.png",
