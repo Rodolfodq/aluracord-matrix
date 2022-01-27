@@ -1,25 +1,43 @@
 import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React from "react";
 import appConfig from "../config.json";
+import { createClient } from "@supabase/supabase-js";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMyMDQzOCwiZXhwIjoxOTU4ODk2NDM4fQ.MGXhkVNkqtf68xlbVSeLHXKfv2qQAvM5H7HuwBp9oD4";
+const SUPABASE_URL = "https://mtoljtjelstmlmwqkmxu.supabase.co";
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
   const [mensagem, setMensagem] = React.useState("");
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
+  React.useEffect(() => {
+    supabaseClient
+      .from("mensagens")
+      .select("*")
+      .order('id', {ascending: false})
+      .then(({ data }) => {
+        console.log("Dados da consulta", data);
+        setListaDeMensagens(data);
+      });
+  }, []);
+
   function handleNovaMensagem(novaMensagem) {
     const mensangem = {
-      id: listaDeMensagens.length + 1,
       de: "rodolfodq",
       texto: novaMensagem,
     };
-    setListaDeMensagens([mensangem, ...listaDeMensagens]);
+
+    supabaseClient
+      .from("mensagens")
+      .insert([mensangem])
+      .then(({ data }) => {
+        setListaDeMensagens([data[0], ...listaDeMensagens]);
+      });
+
     setMensagem("");
   }
-
-  /*   function handleDeleteMessage(idMensagem) {
-    var msg = idMensagem;
-    console.log(msg);    
-  } */
 
   return (
     <Box
@@ -63,13 +81,6 @@ export default function ChatPage() {
           }}
         >
           <MessageList mensagens={listaDeMensagens} />
-          {/* {listaDeMensagens.map((mensagemAtual) => {
-            return (
-              <li key={mensagemAtual.id}>
-                {mensagemAtual.de}: {mensagemAtual.texto}
-              </li>
-            );
-          })} */}
 
           <Box
             as="form"
@@ -146,7 +157,6 @@ function Header() {
 }
 
 function MessageList(props) {
-  //console.log("MessageList", props);
   return (
     <Box
       tag="ul"
@@ -186,7 +196,7 @@ function MessageList(props) {
                   display: "inline-block",
                   marginRight: "8px",
                 }}
-                src={`https://github.com/rodolfodq.png`}
+                src={`https://github.com/${mensagem.de}.png`}
               />
               <Text tag="strong">{mensagem.de}</Text>
               <Text
