@@ -2,6 +2,8 @@ import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React from "react";
 import appConfig from "../config.json";
 import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/router";
+import { ButtonSendSticker } from "../src/Components/ButtonSendSticker";
 
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMyMDQzOCwiZXhwIjoxOTU4ODk2NDM4fQ.MGXhkVNkqtf68xlbVSeLHXKfv2qQAvM5H7HuwBp9oD4";
@@ -9,32 +11,46 @@ const SUPABASE_URL = "https://mtoljtjelstmlmwqkmxu.supabase.co";
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
+  const roteamento = useRouter();
+  const usuarioLogado = roteamento.query.username;
   const [mensagem, setMensagem] = React.useState("");
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
+
+  function escutaaMensagensEmTempoReal(adicionaMensagem) {
+    return supabaseClient
+      .from("mensagens")
+      .on("INSERT", (resposta) => {
+        adicionaMensagem(resposta.new);
+      })
+      .subscribe();
+  }
 
   React.useEffect(() => {
     supabaseClient
       .from("mensagens")
       .select("*")
-      .order('id', {ascending: false})
+      .order("id", { ascending: false })
       .then(({ data }) => {
         console.log("Dados da consulta", data);
         setListaDeMensagens(data);
       });
+    escutaaMensagensEmTempoReal((novaMensagem) => {
+      setListaDeMensagens((valorAtualDaLista) => {
+        return [novaMensagem, ...valorAtualDaLista];
+      });
+    });
   }, []);
 
   function handleNovaMensagem(novaMensagem) {
     const mensangem = {
-      de: "rodolfodq",
+      de: usuarioLogado,
       texto: novaMensagem,
     };
 
     supabaseClient
       .from("mensagens")
       .insert([mensangem])
-      .then(({ data }) => {
-        setListaDeMensagens([data[0], ...listaDeMensagens]);
-      });
+      .then(({ data }) => {});
 
     setMensagem("");
   }
@@ -113,6 +129,11 @@ export default function ChatPage() {
                 color: appConfig.theme.colors.neutrals[200],
               }}
             />
+            <ButtonSendSticker
+              onStickerClick={(sticker) => {
+                handleNovaMensagem(":sticker: " + sticker);
+              }}
+            />
             <Button
               buttonColors={{
                 contrastColor: appConfig.theme.colors.neutrals["000"],
@@ -157,6 +178,16 @@ function Header() {
 }
 
 function MessageList(props) {
+  function handleDeleteMessage(idmsg) {
+    supabaseClient
+      .from("mensagens")
+      .delete()
+      .match({ id: idmsg })
+      .then(() => {
+        //props.filter((listaDeMensagens) => listaDeMensagens.id !== idmsg);
+      });
+  }
+
   return (
     <Box
       tag="ul"
@@ -216,12 +247,16 @@ function MessageList(props) {
                   marginBottom: "3px",
                 }}
                 onClick={() => {
-                  //handleDeleteMessage(mensagem.id);
+                  handleDeleteMessage(mensagem.id);
                   console.log(mensagem.id);
                 }}
               />
             </Box>
-            {mensagem.texto}
+            {mensagem.texto.startsWith(":sticker:") ? (
+              <Image src={mensagem.texto.replace(":sticker:", "")} />
+            ) : (
+              mensagem.texto
+            )}
           </Text>
         );
       })}
